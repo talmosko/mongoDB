@@ -48,7 +48,7 @@ public class WangReviewsInsertion {
     /**
      * get all the reviews from the wang json,
      * creates a document from them, and add them to the DB
-     */dsadasdas
+     */
     private static void parseWangJSON() {
         Scanner scan = null;
         try {
