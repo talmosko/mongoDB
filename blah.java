@@ -4,9 +4,19 @@ package mongoDB;
  * Created by talmosko on 3/31/15.
  */
 
+import com.mongodb.BasicDBObject;
 import mongoDB.DBObjects.ComposedNoun;
-import org.bson.types.ObjectId;
-import com.google.gson.*;
+import com.mongodb.util.*;
+
+import utils.FileIterator;
+import utils.FileUtils;
+import utils.StaticJSONParser;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Scanner;
+
 public class blah {
 
     /**
@@ -28,11 +38,41 @@ public class blah {
 //        System.out.println(doc.get("_id"));
 //        System.out.println(sentencesCollection.insert(doc).getUpsertedId());
 //        System.out.println(doc.get("_id"));
-        ComposedNoun noun = new ComposedNoun(new ObjectId(),1,1,"dsadsa");
-        String json = new Gson().toJson(noun);
-        System.out.println(json);
-        noun = (ComposedNoun) new Gson().fromJson(json, ComposedNoun.class);
+        Iterator<String> it = null;
+        ArrayList<String> jsons = new ArrayList<String>();
 
+        try {
+            it = FileUtils.getFileIterator("wang.json");
+            while(it.hasNext())
+            {
+                String str = it.next();
+                if(!str.endsWith("}"))
+                    str = str.substring(0,str.length()-1);
+                if(str.startsWith("["))
+                    str = str.substring(1);
+                Scanner scan = new Scanner(str);
+                scan.useDelimiter(", \"reviewContent\": |, \"date\": ");
+                String prologue = scan.next()+ ", \"reviewContent\": ";
+                String content = scan.next();
+                content = "\"" +content.substring(0, content.length() - 1).replaceAll("\"", "\\\\\"") + "\"";
+                String epilogue = ", \"date\": " + scan.next();
+                str = prologue + content + epilogue;
+                jsons.add(str);
+                scan.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            for(String str : jsons)
+            {
+                BasicDBObject obj = (BasicDBObject) JSON.parse(str);
+                System.out.println("after parse");
+                System.out.println(obj.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

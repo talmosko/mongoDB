@@ -59,13 +59,13 @@ public class SentenceBuilder {
         /**
         starting create the document
          */
-        BasicDBObject document = new BasicDBObject("review_id", review_id);
+        BasicDBObject document = new BasicDBObject("reviewId", review_id);
 
         //add the sentence text to the document
         document.append("sentence",parsed.get(CoreAnnotations.TextAnnotation.class));
 
         //add the sentence order in the review
-        document.append("sentence_order", sentence_order);
+        document.append("sentenceOrder", sentence_order);
 
         //add the tree
         document.append("tree", tree.toString());
